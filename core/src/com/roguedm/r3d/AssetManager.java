@@ -10,6 +10,7 @@ import java.util.Map;
 public class AssetManager {
 
     private static final String DUNGEON_WALL_FILE = "tiles/dungeon_wall.png";
+    private static final String DUNGEON_CEILING_FILE = "tiles/dungeon_ceiling.png";
 
     private com.badlogic.gdx.assets.AssetManager manager;
 
@@ -25,10 +26,15 @@ public class AssetManager {
 
     public void load() {
         manager.load(DUNGEON_WALL_FILE, Texture.class);
+        manager.load(DUNGEON_CEILING_FILE, Texture.class);
+
         manager.finishLoading();
 
         if (manager.isLoaded(DUNGEON_WALL_FILE, Texture.class)) {
             tiles.put(Tile.Wall.toString(), getTextureRegions(manager.get(DUNGEON_WALL_FILE, Texture.class), 8, 2));
+        }
+        if (manager.isLoaded(DUNGEON_CEILING_FILE, Texture.class)) {
+            tiles.put(Tile.Floor.toString(), getTextureRegions(manager.get(DUNGEON_CEILING_FILE, Texture.class), 8, 2));
         }
     }
 

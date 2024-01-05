@@ -81,6 +81,9 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        
+
+        // https://mvnrepository.com/artifact/com.squidpony/squidlib-util
+        implementation group: 'com.squidpony', name: 'squidlib-util', version: '3.0.6'
+
     }
 }

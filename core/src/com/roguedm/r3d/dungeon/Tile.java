@@ -2,7 +2,7 @@ package com.roguedm.r3d.dungeon;
 
 public enum Tile {
 
-    Wall("#");
+    Wall("#"), Floor(".");
 
     private String c;
 
