@@ -10,6 +10,7 @@ public class Rogue3d extends Game {
 
 	@Override
 	public void create () {
+		AssetManager.getInstance().load();
 		setScreen(new MainScreen(this));
 	}
 
@@ -18,6 +19,7 @@ public class Rogue3d extends Game {
 		if (this.getScreen() != null) {
 			this.getScreen().dispose();
 		}
+		AssetManager.getInstance().dispose();
 	}
 
 }
