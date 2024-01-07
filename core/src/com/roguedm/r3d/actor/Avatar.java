@@ -11,12 +11,12 @@ public class Avatar {
     private Coord coord;
 
     public Avatar() {
-        coord = Coord.get(2, 1);
+        coord = Coord.get(0, 0);
         facing = Direction.North;
     }
 
     public Direction getFacing() {
-        return facing;
+        return this.facing;
     }
 
     public void setFacing(Direction facing) {
@@ -24,11 +24,15 @@ public class Avatar {
     }
 
     public void setX(int x) {
-        coord = coord.translate(x, 0);
+        if (coord != null) {
+            this.coord = this.coord.translate(x, 0);
+        }
     }
 
     public void setY(int y) {
-        coord = coord.translate(0, y);
+        if (coord != null) {
+            this.coord = this.coord.translate(0, y);
+        }
     }
 
     public void setXY(int x, int y) {
@@ -37,11 +41,17 @@ public class Avatar {
     }
 
     public int getX() {
-        return coord.x;
+        if (coord != null) {
+            return this.coord.x;
+        }
+        return 0;
     }
 
     public int getY(){
-        return coord.y;
+        if (coord != null) {
+            return this.coord.y;
+        }
+        return 0;
     }
 
 }

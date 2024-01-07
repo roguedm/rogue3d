@@ -9,8 +9,10 @@ import java.util.Map;
 
 public class AssetManager {
 
-    private static final String DUNGEON_WALL_FILE = "tiles/dungeon_wall.png";
-    private static final String DUNGEON_CEILING_FILE = "tiles/dungeon_ceiling.png";
+    public static final String DUNGEON_WALL_FILE = "tiles/dungeon_wall.png";
+    public static final String DUNGEON_CEILING_FILE = "tiles/dungeon_ceiling.png";
+    public static final String DUNGEON_DOOR_FILE = "tiles/dungeon_door.png";
+    public static final String DUNGEON_SKULL_FILE = "tiles/skull_pile.png";
 
     private com.badlogic.gdx.assets.AssetManager manager;
 
@@ -27,14 +29,22 @@ public class AssetManager {
     public void load() {
         manager.load(DUNGEON_WALL_FILE, Texture.class);
         manager.load(DUNGEON_CEILING_FILE, Texture.class);
+        manager.load(DUNGEON_DOOR_FILE, Texture.class);
+        manager.load(DUNGEON_SKULL_FILE, Texture.class);
 
         manager.finishLoading();
 
         if (manager.isLoaded(DUNGEON_WALL_FILE, Texture.class)) {
-            tiles.put(Tile.Wall.toString(), getTextureRegions(manager.get(DUNGEON_WALL_FILE, Texture.class), 8, 2));
+            tiles.put(DUNGEON_WALL_FILE, getTextureRegions(manager.get(DUNGEON_WALL_FILE, Texture.class), 8, 2));
         }
         if (manager.isLoaded(DUNGEON_CEILING_FILE, Texture.class)) {
-            tiles.put(Tile.Floor.toString(), getTextureRegions(manager.get(DUNGEON_CEILING_FILE, Texture.class), 8, 2));
+            tiles.put(DUNGEON_CEILING_FILE, getTextureRegions(manager.get(DUNGEON_CEILING_FILE, Texture.class), 8, 2));
+        }
+        if (manager.isLoaded(DUNGEON_DOOR_FILE, Texture.class)) {
+            tiles.put(DUNGEON_DOOR_FILE, getTextureRegions(manager.get(DUNGEON_DOOR_FILE, Texture.class), 8, 2));
+        }
+        if (manager.isLoaded(DUNGEON_SKULL_FILE, Texture.class)) {
+            tiles.put(DUNGEON_SKULL_FILE, getTextureRegions(manager.get(DUNGEON_SKULL_FILE, Texture.class), 8, 2));
         }
     }
 
@@ -44,14 +54,17 @@ public class AssetManager {
         return region;
     }
 
-    public TextureRegion getTile(String character, int x, int y) {
-        if (tiles == null) {
+    public TextureRegion getTile(String assetName, int x, int y) {
+        if (this.tiles == null || assetName == null) {
             return null;
         }
-        if (tiles.get(character) == null) {
+        if (this.tiles.get(assetName) == null) {
             return null;
         }
-        return new TextureRegion(tiles.get(character)[x][y]);
+        if (x < this.tiles.get(assetName).length && y < this.tiles.get(assetName)[0].length) {
+            return new TextureRegion(this.tiles.get(assetName)[x][y]);
+        }
+        return null;
     }
 
     public static AssetManager getInstance() {

@@ -1,6 +1,5 @@
 package com.roguedm.r3d;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -13,15 +12,13 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.roguedm.r3d.actor.Avatar;
 import com.roguedm.r3d.dungeon.Direction;
-import com.roguedm.r3d.dungeon.Tile;
-import com.roguedm.r3d.dungeon.World;
-
+import com.roguedm.r3d.dungeon.Dungeon;
 import squidpony.squidmath.Coord;
 
 public class MainScreen extends InputAdapter implements Screen {
 
-    protected static final int SCREEN_WIDTH = 640;
-    protected static final int SCREEN_HEIGHT = 480;
+    private static final int SCREEN_WIDTH = 640;
+    private static final int SCREEN_HEIGHT = 480;
 
     private Game parent;
 
@@ -29,17 +26,22 @@ public class MainScreen extends InputAdapter implements Screen {
 
     private SpriteBatch batch;
 
-    private World world;
+    private Dungeon dungeon;
 
     private Avatar avatar;
 
     public MainScreen(Game parent) {
-        batch = new SpriteBatch();
-        viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, new OrthographicCamera());
-        viewport.getCamera().update();
+        this.batch = new SpriteBatch();
+        this.viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, new OrthographicCamera());
+        this.viewport.getCamera().update();
 
-        world = new World(SCREEN_WIDTH, SCREEN_HEIGHT);
-        avatar = new Avatar();
+        this.dungeon = new Dungeon(SCREEN_WIDTH, SCREEN_HEIGHT, 2252637788195L);
+        this.avatar = new Avatar();
+
+        Coord randomFloorSpace = dungeon.getRandomFloorSpace();
+        if (randomFloorSpace != null) {
+            this.avatar.setXY(randomFloorSpace.getX(), randomFloorSpace.getY());
+        }
 
         Gdx.input.setInputProcessor(this);
     }
@@ -65,22 +67,22 @@ public class MainScreen extends InputAdapter implements Screen {
             return true;
         }
         if (Input.Keys.ENTER == keycode) {
-            //combat(MonsterFactory.getInstance().getRandomMonster("Cultist"));
             return false;
         }
         return false;
     }
 
     private void move(int value) {
-        Coord c = getNewPosition(value);
-        if (world != null && avatar != null && world.isWalkable(avatar.getX() + c.getX(), avatar.getY() + c.getY())) {
-            avatar.setXY(c.getX(), c.getY());
+        Coord coord = getNewPosition(value);
+        if (this.dungeon != null && this.avatar != null && coord != null
+                && this.dungeon.isWalkable(this.avatar.getX() + coord.getX(), this.avatar.getY() + coord.getY())) {
+            this.avatar.setXY(coord.getX(), coord.getY());
         }
     }
 
-    public boolean turn(int dir) {
-        Direction facing = avatar.getFacing();
-        if (dir > 0) {
+    public boolean turn(int direction) {
+        Direction facing = this.avatar.getFacing();
+        if (direction > 0) {
             if (facing == Direction.North) {
                 facing = Direction.East;
             }
@@ -107,50 +109,51 @@ public class MainScreen extends InputAdapter implements Screen {
                 facing = Direction.North;
             }
         }
-        avatar.setFacing(facing);
+        this.avatar.setFacing(facing);
         return false;
     }
 
     public Coord getNewPosition(int value) {
-        Direction facing = avatar.getFacing();
-        Coord c = null;
+        Direction facing = this.avatar.getFacing();
+        Coord coord = null;
         if (facing == Direction.South) {
-            c = Coord.get(0, value);
+            coord = Coord.get(0, value);
         }
         if (facing == Direction.North) {
-            c = Coord.get(0, -value);
+            coord = Coord.get(0, -value);
         }
         if (facing == Direction.East) {
-            c = Coord.get(value, 0);
+            coord = Coord.get(value, 0);
         }
         if (facing == Direction.West) {
-            c = Coord.get(-value, 0);
+            coord = Coord.get(-value, 0);
         }
-        return c;
+        return coord;
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
-
-        if (batch != null && viewport != null) {
-            Camera camera = viewport.getCamera();
-            camera.update();
-            viewport.apply(true);
-            batch.setProjectionMatrix(camera.combined);
-
-            batch.begin();
-            if (world != null && avatar != null) {
-                world.draw(batch, avatar.getFacing(), avatar.getX(), avatar.getY(), 0, 0);
+        if (this.batch != null && this.viewport != null) {
+            Camera camera = this.viewport.getCamera();
+            if (camera != null) {
+                camera.update();
+                this.viewport.apply(true);
+                this.batch.setProjectionMatrix(camera.combined);
             }
-            batch.end();
+
+            this.batch.begin();
+            if (this.dungeon != null && this.avatar != null) {
+                this.dungeon.draw(this.batch, this.avatar.getFacing(), this.avatar.getX(), this.avatar.getY(), 0, 0);
+            }
+            this. batch.end();
         }
     }
 
     @Override
     public void resize(int width, int height) {
-        if (viewport != null) {
-            viewport.update(width, height, true);
+        if (this.viewport != null) {
+            this.viewport.update(width, height, true);
         }
     }
 
